@@ -4,11 +4,8 @@ import springboot.user.domain.User;
 import java.sql.*;
 
 public class UserDao {
-    private final String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
-    private final String DB_USER_NAME = "sa";
-    private final String DB_PASSWORD = "";
     public UserDao() throws SQLException {
-        Connection c = DriverManager.getConnection(DB_URL, DB_USER_NAME, DB_PASSWORD);
+        Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement(
                 "create table users (" +
                         "id varchar(10) primary key, " +
@@ -20,7 +17,7 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException {
-        Connection c = DriverManager.getConnection(DB_URL, DB_USER_NAME, DB_PASSWORD);
+        Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement(
                 "insert into users(id, name, password) values(?, ?, ?)");
         ps.setString(1, user.getId());
@@ -32,7 +29,7 @@ public class UserDao {
     }
 
     public User get(String id) throws SQLException {
-        Connection c = DriverManager.getConnection(DB_URL, DB_USER_NAME, DB_PASSWORD);
+        Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement(
                 "select * from users where id = ?");
         ps.setString(1, id);
@@ -50,4 +47,12 @@ public class UserDao {
 
         return user;
     }
+
+    private Connection getConnection() throws SQLException {
+        String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+        String DB_USER_NAME = "sa";
+        String DB_PASSWORD = "";
+        return DriverManager.getConnection(DB_URL, DB_USER_NAME, DB_PASSWORD);
+    }
+
 }
