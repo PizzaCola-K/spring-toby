@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class SimpleConnectionMaker {
-    public SimpleConnectionMaker() throws SQLException {
-        Connection c = makeNewConnection();
+public class H2ConnectionMaker implements ConnectionMaker{
+    public H2ConnectionMaker() throws SQLException {
+        Connection c = makeConnection();
         PreparedStatement ps = c.prepareStatement(
                 "create table users (" +
                         "id varchar(10) primary key, " +
@@ -18,7 +18,8 @@ public class SimpleConnectionMaker {
         c.close();
     }
 
-    public Connection makeNewConnection() throws SQLException {
+    @Override
+    public Connection makeConnection() throws SQLException {
         String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
         String DB_USER_NAME = "sa";
         String DB_PASSWORD = "";
