@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class H2UserDao extends UserDao {
-    public H2UserDao() throws SQLException {
-        Connection c = getConnection();
+public class SimpleConnectionMaker {
+    public SimpleConnectionMaker() throws SQLException {
+        Connection c = makeNewConnection();
         PreparedStatement ps = c.prepareStatement(
                 "create table users (" +
                         "id varchar(10) primary key, " +
@@ -18,11 +18,10 @@ public class H2UserDao extends UserDao {
         c.close();
     }
 
-    public Connection getConnection() throws SQLException {
+    public Connection makeNewConnection() throws SQLException {
         String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
         String DB_USER_NAME = "sa";
         String DB_PASSWORD = "";
         return DriverManager.getConnection(DB_URL, DB_USER_NAME, DB_PASSWORD);
     }
-
 }
