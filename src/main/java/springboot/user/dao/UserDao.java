@@ -1,22 +1,14 @@
 package springboot.user.dao;
 
 import springboot.user.domain.User;
-import java.sql.*;
 
-public class UserDao {
-    public UserDao() throws SQLException {
-        Connection c = getConnection();
-        PreparedStatement ps = c.prepareStatement(
-                "create table users (" +
-                        "id varchar(10) primary key, " +
-                        "name varchar(20) not null, " +
-                        "password varchar(10) not null)");
-        ps.execute();
-        ps.close();
-        c.close();
-    }
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-    public void add(User user) throws SQLException {
+public abstract class UserDao {
+    public void add(User user) throws SQLException, ClassNotFoundException {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement(
                 "insert into users(id, name, password) values(?, ?, ?)");
@@ -28,7 +20,7 @@ public class UserDao {
         c.close();
     }
 
-    public User get(String id) throws SQLException {
+    public User get(String id) throws SQLException, ClassNotFoundException {
         Connection c = getConnection();
         PreparedStatement ps = c.prepareStatement(
                 "select * from users where id = ?");
@@ -48,11 +40,6 @@ public class UserDao {
         return user;
     }
 
-    private Connection getConnection() throws SQLException {
-        String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
-        String DB_USER_NAME = "sa";
-        String DB_PASSWORD = "";
-        return DriverManager.getConnection(DB_URL, DB_USER_NAME, DB_PASSWORD);
-    }
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 
 }
