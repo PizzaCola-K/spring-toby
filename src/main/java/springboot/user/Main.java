@@ -1,5 +1,7 @@
 package springboot.user;
 
+import springboot.user.dao.ConnectionMaker;
+import springboot.user.dao.H2ConnectionMaker;
 import springboot.user.dao.UserDao;
 import springboot.user.domain.User;
 
@@ -7,7 +9,8 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
-        UserDao dao = new UserDao();
+        ConnectionMaker connectionMaker = new H2ConnectionMaker();
+        UserDao dao = new UserDao(connectionMaker);
         User user = new User();
         user.setId("whiteship");
         user.setName("백기선");

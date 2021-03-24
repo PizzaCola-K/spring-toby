@@ -11,8 +11,8 @@ public class UserDao {
 
     private ConnectionMaker connectionMaker;
 
-    public UserDao() throws SQLException {
-        this.connectionMaker = new H2ConnectionMaker();
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
     }
 
     public void add(User user) throws SQLException {
