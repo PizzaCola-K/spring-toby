@@ -1,8 +1,8 @@
 package springboot.user;
 
-import springboot.user.dao.ConnectionMaker;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import springboot.user.dao.DaoFactory;
-import springboot.user.dao.H2ConnectionMaker;
 import springboot.user.dao.UserDao;
 import springboot.user.domain.User;
 
@@ -10,7 +10,8 @@ import java.sql.SQLException;
 
 public class UserDaoTest {
     public static void main(String[] args) throws SQLException {
-        UserDao dao = new DaoFactory().userDao();
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        UserDao dao = context.getBean("userDao", UserDao.class);
         User user = new User();
         user.setId("whiteship");
         user.setName("백기선");
