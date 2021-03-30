@@ -5,17 +5,22 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class H2ConnectionMaker implements ConnectionMaker{
-    public H2ConnectionMaker() throws SQLException {
-        Connection c = makeConnection();
-        PreparedStatement ps = c.prepareStatement(
-                "create table users (" +
-                        "id varchar(10) primary key, " +
-                        "name varchar(20) not null, " +
-                        "password varchar(10) not null)");
-        ps.execute();
-        ps.close();
-        c.close();
+public class H2ConnectionMaker implements ConnectionMaker {
+
+    static {
+        try {
+            Connection c = new H2ConnectionMaker().makeConnection();
+            PreparedStatement ps = c.prepareStatement(
+                    "create table users (" +
+                            "id varchar(10) primary key, " +
+                            "name varchar(20) not null, " +
+                            "password varchar(10) not null)");
+            ps.execute();
+            ps.close();
+            c.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     @Override
