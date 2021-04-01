@@ -15,11 +15,9 @@ public class UserDao {
     private JdbcContext jdbcContext;
 
     public void setDataSource(DataSource dataSource) {
+        jdbcContext = new JdbcContext();
+        jdbcContext.setDataSource(dataSource);
         this.dataSource = dataSource;
-    }
-
-    public void setJdbcContext(JdbcContext jdbcContext) {
-        this.jdbcContext = jdbcContext;
     }
 
     public void add(final User user) throws SQLException {
@@ -53,10 +51,10 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.workWithStatementStrategy(c -> c.prepareStatement("delete from users"));
+        jdbcContext.executeSql("delete from users");
     }
 
-    public int getCount() throws SQLException{
+    public int getCount() throws SQLException {
         try (Connection c = dataSource.getConnection();
              PreparedStatement ps = c.prepareStatement("select count(id) from users");
              ResultSet rs = ps.executeQuery()) {
