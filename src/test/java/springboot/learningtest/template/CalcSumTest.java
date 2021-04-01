@@ -1,17 +1,25 @@
 package springboot.learningtest.template;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 class CalcSumTest {
+    private Calculator calculator;
+    private String numFilePath;
+
+    @BeforeEach
+    public void setUp() {
+        calculator = new Calculator();
+        numFilePath = getClass().getResource("/numbers.txt").getPath();
+    }
+
     @Test
     public void sumOfNumbers() throws IOException {
-        Calculator calculator = new Calculator();
-        int sum = calculator.calcSum(getClass().getClassLoader().getResource("numbers.txt").getPath());
-        assertThat(sum).isEqualTo(10);
+        assertThat(calculator.calcSum(numFilePath)).isEqualTo(10);
     }
 }
