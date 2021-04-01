@@ -1,14 +1,9 @@
 package springboot.user.dao;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import springboot.user.domain.User;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class UserDao {
 
@@ -27,24 +22,18 @@ public class UserDao {
                 user.getPassword());
     }
 
-    public User get(String id) throws SQLException {
-        try (Connection c = dataSource.getConnection();
-             PreparedStatement ps = c.prepareStatement("select * from users where id = ?")) {
-            ps.setString(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                User user = null;
-                if (rs.next()) {
-                    user = new User();
+    public User get(String id) {
+        return jdbcTemplate.queryForObject(
+                "select * from users where id = ?",
+                new Object[]{id},
+                new int[]{1},
+                (rs, rowNum) -> {
+                    User user = new User();
                     user.setId(rs.getString("id"));
                     user.setName(rs.getString("name"));
                     user.setPassword(rs.getString("password"));
-                }
-                if (user == null) {
-                    throw new EmptyResultDataAccessException(1);
-                }
-                return user;
-            }
-        }
+                    return user;
+                });
     }
 
     public void deleteAll() {
