@@ -1,6 +1,7 @@
 package springboot.user.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import springboot.user.domain.User;
 
 import javax.sql.DataSource;
@@ -8,12 +9,18 @@ import java.util.List;
 
 public class UserDao {
 
-    private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
+
+    private final RowMapper<User> userMapper = (rs, rowNum) -> {
+        User user = new User();
+        user.setId(rs.getString("id"));
+        user.setName(rs.getString("name"));
+        user.setPassword(rs.getString("password"));
+        return user;
+    };
 
     public void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        this.dataSource = dataSource;
     }
 
     public void add(final User user) {
@@ -28,38 +35,18 @@ public class UserDao {
                 "select * from users where id = ?",
                 new Object[]{id},
                 new int[]{1},
-                (rs, rowNum) -> {
-                    User user = new User();
-                    user.setId(rs.getString("id"));
-                    user.setName(rs.getString("name"));
-                    user.setPassword(rs.getString("password"));
-                    return user;
-                });
+                userMapper);
     }
 
     public void deleteAll() {
-        //jdbcTemplate.update(c -> c.prepareStatement("delete from users"));
         jdbcTemplate.update("delete from users");
     }
 
     public Integer getCount() {
-        return jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
-        /*
-        return jdbcTemplate.query(
-                c -> c.prepareStatement("select count(id) from users"),
-                rs -> {
-                    rs.next();
-                    return rs.getInt(1);
-                });*/
+        return jdbcTemplate.queryForObject("select count(id) from users", Integer.class);
     }
 
     public List<User> getAll() {
-        return jdbcTemplate.query("select * from users order by id", (rs, rowNum) -> {
-            User user = new User();
-            user.setId(rs.getString("id"));
-            user.setName(rs.getString("name"));
-            user.setPassword(rs.getString("password"));
-            return user;
-        });
+        return jdbcTemplate.query("select * from users order by id", userMapper);
     }
 }
