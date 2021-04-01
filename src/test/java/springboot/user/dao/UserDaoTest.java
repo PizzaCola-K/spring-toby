@@ -13,6 +13,7 @@ import springboot.user.domain.User;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -77,6 +78,22 @@ class UserDaoTest {
         assertThat(userDao.getCount()).isEqualTo(0);
         assertThatExceptionOfType(EmptyResultDataAccessException.class)
                 .isThrownBy(() -> userDao.get("unknown_id"));
+    }
+
+    @Test
+    public void getAll() {
+        userDao.deleteAll();
+
+        assertThat(userDao.getAll()).isEmpty();
+        userDao.add(user1);
+        List<User> users = userDao.getAll();
+        assertThat(users).containsExactly(user1);
+        userDao.add(user2);
+        users = userDao.getAll();
+        assertThat(users).containsExactly(user1, user2);
+        userDao.add(user3);
+        users = userDao.getAll();
+        assertThat(users).containsExactly(user3, user1, user2);
     }
 
 }

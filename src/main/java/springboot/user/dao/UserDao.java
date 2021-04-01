@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import springboot.user.domain.User;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 public class UserDao {
 
@@ -50,5 +51,15 @@ public class UserDao {
                     rs.next();
                     return rs.getInt(1);
                 });*/
+    }
+
+    public List<User> getAll() {
+        return jdbcTemplate.query("select * from users order by id", (rs, rowNum) -> {
+            User user = new User();
+            user.setId(rs.getString("id"));
+            user.setName(rs.getString("name"));
+            user.setPassword(rs.getString("password"));
+            return user;
+        });
     }
 }
