@@ -12,20 +12,18 @@ import java.sql.SQLException;
 public class UserDao {
 
     private DataSource dataSource;
+    private JdbcContext jdbcContext;
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
-        try (Connection c = dataSource.getConnection();
-             PreparedStatement ps = stmt.makePreparedStatement(c)) {
-            ps.executeUpdate();
-        }
+    public void setJdbcContext(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
     }
 
     public void add(final User user) throws SQLException {
-        jdbcContextWithStatementStrategy(c -> {
+        jdbcContext.workWithStatementStrategy(c -> {
             PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
@@ -55,7 +53,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(c -> c.prepareStatement("delete from users"));
+        jdbcContext.workWithStatementStrategy(c -> c.prepareStatement("delete from users"));
     }
 
     public int getCount() throws SQLException{
