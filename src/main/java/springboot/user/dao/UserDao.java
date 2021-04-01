@@ -1,6 +1,7 @@
 package springboot.user.dao;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import springboot.user.domain.User;
 
 import javax.sql.DataSource;
@@ -12,16 +13,15 @@ import java.sql.SQLException;
 public class UserDao {
 
     private DataSource dataSource;
-    private JdbcContext jdbcContext;
+    private JdbcTemplate jdbcTemplate;
 
     public void setDataSource(DataSource dataSource) {
-        jdbcContext = new JdbcContext();
-        jdbcContext.setDataSource(dataSource);
+        jdbcTemplate = new JdbcTemplate(dataSource);
         this.dataSource = dataSource;
     }
 
     public void add(final User user) throws SQLException {
-        jdbcContext.executeSql("insert into users(id, name, password) values(?, ?, ?)",
+        jdbcTemplate.update("insert into users(id, name, password) values(?, ?, ?)",
                 user.getId(),
                 user.getName(),
                 user.getPassword());
@@ -48,7 +48,8 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.executeSql("delete from users");
+        //jdbcTemplate.update(c -> c.prepareStatement("delete from users"));
+        jdbcTemplate.update("delete from users");
     }
 
     public int getCount() throws SQLException {
