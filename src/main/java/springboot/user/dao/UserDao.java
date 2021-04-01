@@ -20,7 +20,7 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
-    public void add(final User user) throws SQLException {
+    public void add(final User user) {
         jdbcTemplate.update("insert into users(id, name, password) values(?, ?, ?)",
                 user.getId(),
                 user.getName(),
@@ -47,17 +47,19 @@ public class UserDao {
         }
     }
 
-    public void deleteAll() throws SQLException {
+    public void deleteAll() {
         //jdbcTemplate.update(c -> c.prepareStatement("delete from users"));
         jdbcTemplate.update("delete from users");
     }
 
-    public int getCount() throws SQLException {
-        try (Connection c = dataSource.getConnection();
-             PreparedStatement ps = c.prepareStatement("select count(id) from users");
-             ResultSet rs = ps.executeQuery()) {
-            rs.next();
-            return rs.getInt(1);
-        }
+    public Integer getCount() {
+        return jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+        /*
+        return jdbcTemplate.query(
+                c -> c.prepareStatement("select count(id) from users"),
+                rs -> {
+                    rs.next();
+                    return rs.getInt(1);
+                });*/
     }
 }
