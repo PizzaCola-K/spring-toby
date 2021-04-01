@@ -22,4 +22,9 @@ class CalcSumTest {
     public void sumOfNumbers() throws IOException {
         assertThat(calculator.calcSum(numFilePath)).isEqualTo(10);
     }
+
+    @Test
+    public void multiplyOfNumbers() throws IOException {
+        assertThat(calculator.calcMultiply(numFilePath)).isEqualTo(24);
+    }
 }
