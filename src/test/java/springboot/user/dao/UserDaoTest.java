@@ -4,14 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import springboot.user.domain.User;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -32,8 +31,6 @@ class UserDaoTest {
 
     @BeforeEach
     public void setUp() {
-        DataSource dataSource = new SingleConnectionDataSource("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "", true);
-        userDao.setDataSource(dataSource);
         user1 = new User("gyumee", "박성철", "springno1");
         user2 = new User("leegw700", "이길원", "springno2");
         user3 = new User("bumjin", "박범진", "springno3");
@@ -94,6 +91,13 @@ class UserDaoTest {
         userDao.add(user3);
         users = userDao.getAll();
         assertThat(users).containsExactly(user3, user1, user2);
+    }
+
+    @Test
+    public void duplicateKey() {
+        userDao.deleteAll();
+        userDao.add(user1);
+        assertThatExceptionOfType(DuplicateKeyException.class).isThrownBy(() -> userDao.add(user1));
     }
 
 }
