@@ -25,6 +25,9 @@ public class UserServiceTest {
     UserService userService;
 
     @Autowired
+    UserLevelUpgradePolicy userLevelUpgradePolicy;
+
+    @Autowired
     UserDao userDao;
 
     List<User> users;
@@ -62,5 +65,22 @@ public class UserServiceTest {
         } else {
             assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel());
         }
+    }
+
+    @Test
+    public void upgradeAllOrNothing() {
+        UserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(this.userDao);
+        testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
+        for (User user : users) userDao.add(user);
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUseServiceException expected");
+        } catch (TestUserServiceException e) {
+
+        }
+
+        checkLevelUpgraded(users.get(1), false);
     }
 }
