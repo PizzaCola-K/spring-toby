@@ -27,7 +27,6 @@ public class UserServiceTest {
 
     List<User> users;
 
-
     @BeforeEach
     void setUp() {
         users = Arrays.asList(
