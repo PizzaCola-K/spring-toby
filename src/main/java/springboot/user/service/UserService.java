@@ -48,10 +48,6 @@ public class UserService {
         } catch (Exception e) {
             transactionManager.rollback(status);
             throw e;
-        } finally {
-            DataSourceUtils.releaseConnection(connection, dataSource);
-            TransactionSynchronizationManager.unbindResource(this.dataSource);
-            TransactionSynchronizationManager.clearSynchronization();
         }
 
     }
