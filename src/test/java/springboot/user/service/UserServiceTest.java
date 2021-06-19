@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.PlatformTransactionManager;
 import springboot.user.dao.UserDao;
 import springboot.user.domain.Level;
 import springboot.user.domain.User;
@@ -34,6 +35,9 @@ public class UserServiceTest {
 
     @Autowired
     DataSource dataSource;
+
+    @Autowired
+    PlatformTransactionManager transactionManager;
 
     List<User> users;
 
@@ -77,7 +81,7 @@ public class UserServiceTest {
         UserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
         testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
-        testUserService.setDataSource(this.dataSource);
+        testUserService.setTransactionManager(this.transactionManager);
         for (User user : users) userDao.add(user);
 
         try {
