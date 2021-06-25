@@ -73,11 +73,7 @@ public class UserService {
             message.setText("사용자님의 등급이 " + user.getLevel().name() + "로 업그레이드 되었습니다.");
 
             Transport.send(message);
-        } catch (AddressException e) {
-            throw new RuntimeException(e);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
