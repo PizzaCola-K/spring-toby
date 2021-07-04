@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
+import springboot.mail.MailSender;
 import springboot.user.dao.UserDao;
 import springboot.user.domain.Level;
 import springboot.user.domain.User;
