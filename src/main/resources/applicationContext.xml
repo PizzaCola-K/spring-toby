@@ -29,5 +29,6 @@
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="mail.server.com"/>
     </bean>
+    <bean id="dummyMailSender" class="springboot.mail.DummyMailSender" />
 
 </beans>

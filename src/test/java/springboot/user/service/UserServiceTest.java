@@ -39,6 +39,9 @@ public class UserServiceTest {
     DataSource dataSource;
 
     @Autowired
+    DummyMailSender dummyMailSender;
+
+    @Autowired
     PlatformTransactionManager transactionManager;
 
     List<User> users;
@@ -94,7 +97,7 @@ public class UserServiceTest {
         testUserService.setUserDao(this.userDao);
         testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
         testUserService.setTransactionManager(this.transactionManager);
-        testUserService.setMailSender(new MockMailSender());
+        testUserService.setMailSender(dummyMailSender);
         for (User user : users) userDao.add(user);
 
         try {
