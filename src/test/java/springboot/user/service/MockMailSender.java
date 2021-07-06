@@ -1,8 +1,8 @@
 package springboot.user.service;
 
 import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import springboot.mail.MailSender;
 
 import java.util.ArrayList;
 import java.util.List;
