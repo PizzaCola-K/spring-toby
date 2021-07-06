@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
+import springboot.mail.DummyMailSender;
 import springboot.mail.MailSender;
 import springboot.user.dao.UserDao;
 import springboot.user.domain.Level;
@@ -40,6 +41,9 @@ public class UserServiceTest {
 
     @Autowired
     PlatformTransactionManager transactionManager;
+
+    @Autowired
+    DummyMailSender dummyMailSender;
 
     List<User> users;
 
@@ -94,6 +98,7 @@ public class UserServiceTest {
         testUserService.setUserDao(this.userDao);
         testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
         testUserService.setTransactionManager(this.transactionManager);
+        testUserService.setMailSender(this.dummyMailSender);
         for (User user : users) userDao.add(user);
 
         try {

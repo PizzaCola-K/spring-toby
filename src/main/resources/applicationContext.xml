@@ -17,7 +17,7 @@
         <property name="userDao" ref="userDao" />
         <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy" />
         <property name="transactionManager" ref="transactionManager" />
-        <property name="mailSender" ref="mailSender" />
+        <property name="mailSender" ref="dummyMailSender" />
     </bean>
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
@@ -26,8 +26,6 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
     <bean id="h2ConnectionMaker" class="springboot.user.dao.H2ConnectionMaker" />
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="mail.server.com" />
-    </bean>
+    <bean id="dummyMailSender" class="springboot.mail.DummyMailSender" />
 
 </beans>
