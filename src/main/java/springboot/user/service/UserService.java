@@ -40,17 +40,21 @@ public class UserService {
     public void upgradeLevels() throws SQLException {
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
-            for (User user : userDao.getAll()) {
-                if (userLevelUpgradePolicy.canUpgradeLevel(user)) {
-                    upgradeLevel(user);
-                }
-            }
+            upgradeLevelsInternal();
             transactionManager.commit(status);
         } catch (Exception e) {
             transactionManager.rollback(status);
             throw e;
         }
 
+    }
+
+    private void upgradeLevelsInternal() {
+        for (User user : userDao.getAll()) {
+            if (userLevelUpgradePolicy.canUpgradeLevel(user)) {
+                upgradeLevel(user);
+            }
+        }
     }
 
     protected void upgradeLevel(User user) {
