@@ -2,10 +2,10 @@ package springboot.user.service;
 
 import springboot.user.domain.User;
 
-public class TestUserService extends UserService {
+public class TestUserServiceImpl extends UserServiceImpl {
     private final String id;
 
-    public TestUserService(String id) {
+    public TestUserServiceImpl(String id) {
         this.id = id;
     }
 

@@ -15,17 +15,19 @@ import springboot.user.domain.Level;
 import springboot.user.domain.User;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static springboot.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
-import static springboot.user.service.UserService.MIN_RECCOMMNED_FOR_GOLD;
+import static springboot.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
+import static springboot.user.service.UserServiceImpl.MIN_RECCOMMNED_FOR_GOLD;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = "/applicationContext.xml")
-public class UserServiceTest {
+public class UserServiceImplTest {
+    @Autowired
+    UserServiceImpl userServiceImpl;
+
     @Autowired
     UserService userService;
 
@@ -59,16 +61,16 @@ public class UserServiceTest {
 
     @Test
     @DirtiesContext
-    public void upgradeLevels() throws SQLException {
+    public void upgradeLevels() {
         userDao.deleteAll();
         for (User user : users) {
             userDao.add(user);
         }
 
         MockMailSender mockMailSender = new MockMailSender();
-        userService.setMailSender(mockMailSender);
+        userServiceImpl.setMailSender(mockMailSender);
 
-        userService.upgradeLevels();
+        userServiceImpl.upgradeLevels();
 
         checkLevelUpgraded(users.get(0), false);
         checkLevelUpgraded(users.get(1), true);
@@ -93,17 +95,21 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothing() {
-        UserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(this.userDao);
-        testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
-        testUserService.setTransactionManager(this.transactionManager);
-        testUserService.setMailSender(dummyMailSender);
+        UserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
+        testUserServiceImpl.setUserDao(this.userDao);
+        testUserServiceImpl.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
+        testUserServiceImpl.setMailSender(dummyMailSender);
+
+        UserServiceTx tsUserService = new UserServiceTx();
+        tsUserService.setUserService(testUserServiceImpl);
+        tsUserService.setTransactionManager(transactionManager);
+
         for (User user : users) userDao.add(user);
 
         try {
-            testUserService.upgradeLevels();
+            tsUserService.upgradeLevels();
             fail("TestUseServiceException expected");
-        } catch (TestUserServiceException | SQLException e) {
+        } catch (TestUserServiceException e) {
 
         }
 

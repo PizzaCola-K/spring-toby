@@ -13,10 +13,13 @@
     </bean>
     <bean id="userLevelUpgradePolicy" class="springboot.user.service.DefaultUserLevelUpgradePolicy">
     </bean>
-    <bean id="userService" class="springboot.user.service.UserService">
+    <bean id="userService" class="springboot.user.service.UserServiceTx" >
+        <property name="transactionManager" ref="transactionManager" />
+        <property name="userService" ref="userServiceImpl" />
+    </bean>
+    <bean id="userServiceImpl" class="springboot.user.service.UserServiceImpl">
         <property name="userDao" ref="userDao" />
         <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy" />
-        <property name="transactionManager" ref="transactionManager" />
         <property name="mailSender" ref="mailSender" />
     </bean>
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
