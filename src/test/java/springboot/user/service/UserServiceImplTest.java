@@ -60,28 +60,34 @@ public class UserServiceImplTest {
     }
 
     @Test
-    @DirtiesContext
     public void upgradeLevels() {
-        userDao.deleteAll();
-        for (User user : users) {
-            userDao.add(user);
-        }
+        UserServiceImpl userService = new UserServiceImpl();
 
+        MockUserDao mockUserDao = new MockUserDao(this.users);
         MockMailSender mockMailSender = new MockMailSender();
-        userServiceImpl.setMailSender(mockMailSender);
 
-        userServiceImpl.upgradeLevels();
+        userService.setUserDao(mockUserDao);
+        userService.setMailSender(mockMailSender);
+        userService.setUserLevelUpgradePolicy(new DefaultUserLevelUpgradePolicy());
 
-        checkLevelUpgraded(users.get(0), false);
-        checkLevelUpgraded(users.get(1), true);
-        checkLevelUpgraded(users.get(2), false);
-        checkLevelUpgraded(users.get(3), true);
-        checkLevelUpgraded(users.get(4), false);
+        userService.upgradeLevels();
+
+        List<User> updated = mockUserDao.getUpdated();
+
+        assertThat(updated).hasSize(2);
+
+        checkUserAndLevel(updated.get(0), "joytouch", Level.SILVER);
+        checkUserAndLevel(updated.get(1), "madnite1", Level.GOLD);
 
         List<String> request = mockMailSender.getRequests();
         assertThat(request).hasSize(2);
         assertThat(request.get(0)).isEqualTo(users.get(1).getEmail());
         assertThat(request.get(1)).isEqualTo(users.get(3).getEmail());
+    }
+
+    private void checkUserAndLevel(User updated, String expectedId, Level expectedLevel) {
+        assertThat(updated.getId()).isEqualTo(expectedId);
+        assertThat(updated.getLevel()).isEqualTo(expectedLevel);
     }
 
     private void checkLevelUpgraded(User user, boolean upgraded) {
